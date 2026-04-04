@@ -1,0 +1,5 @@
+{
+  "name": "Smart Study AI",
+  "description": "An AI-powered study assistant for generating summaries, quizzes, and flashcards.",
+  "requestFramePermissions": []
+}
