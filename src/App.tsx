@@ -5,6 +5,7 @@ import ChatInterface from "./components/ChatInterface";
 import Summarizer from "./components/Summarizer";
 import QuizGenerator from "./components/QuizGenerator";
 import Flashcards from "./components/Flashcards";
+import ResourcesExplorer from "./components/ResourcesExplorer";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("home");
@@ -21,6 +22,8 @@ export default function App() {
         return <QuizGenerator />;
       case "flashcards":
         return <Flashcards />;
+      case "resources":
+        return <ResourcesExplorer />;
       default:
         return <Dashboard setActiveTab={setActiveTab} />;
     }

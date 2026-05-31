@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { FileText, Loader2, Copy, Check, Sparkles } from "lucide-react";
 import { generateSummary } from "@/src/services/gemini";
 import ReactMarkdown from "react-markdown";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function Summarizer() {
+  const { t, language } = useLanguage();
   const [text, setText] = useState("");
   const [summary, setSummary] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +15,8 @@ export default function Summarizer() {
     if (!text.trim() || isLoading) return;
     setIsLoading(true);
     try {
-      const result = await generateSummary(text);
+      const langInstruction = language === "am" ? " Please summarize in Amharic." : "";
+      const result = await generateSummary(text + langInstruction);
       setSummary(result || "");
     } catch (error) {
       console.error("Summary error:", error);
@@ -31,9 +34,9 @@ export default function Summarizer() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Text Summarizer</h2>
+        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{t.summarizerTitle}</h2>
         <p className="text-slate-500 max-w-2xl">
-          Paste your study notes, articles, or any long text below to get a concise, AI-powered summary.
+          {t.summarizerSubtitle}
         </p>
       </div>
 
@@ -44,7 +47,7 @@ export default function Summarizer() {
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Paste your text here (min 50 words for best results)..."
+              placeholder={t.summarizePlaceholder}
               className="w-full h-96 p-6 bg-white border border-slate-200 rounded-3xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none shadow-sm transition-all text-slate-700 leading-relaxed"
             />
             <div className="absolute bottom-4 right-4 text-xs text-slate-400">
@@ -54,17 +57,17 @@ export default function Summarizer() {
           <button
             onClick={handleSummarize}
             disabled={!text.trim() || isLoading}
-            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-100"
+            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-100 cursor-pointer"
           >
             {isLoading ? (
               <>
                 <Loader2 className="animate-spin" size={20} />
-                <span>Summarizing...</span>
+                <span>{t.summarizing}</span>
               </>
             ) : (
               <>
                 <Sparkles size={20} />
-                <span>Generate Summary</span>
+                <span>{t.generateSummary}</span>
               </>
             )}
           </button>
@@ -77,11 +80,11 @@ export default function Summarizer() {
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-2 text-indigo-600">
                   <FileText size={18} />
-                  <span className="font-semibold text-sm">AI Summary</span>
+                  <span className="font-semibold text-sm">{t.aiSummary}</span>
                 </div>
                 <button
                   onClick={copyToClipboard}
-                  className="p-2 hover:bg-slate-200 rounded-lg transition-colors text-slate-500"
+                  className="p-2 hover:bg-slate-200 rounded-lg transition-colors text-slate-500 cursor-pointer"
                   title="Copy to clipboard"
                 >
                   {copied ? <Check size={18} className="text-green-600" /> : <Copy size={18} />}
@@ -97,9 +100,9 @@ export default function Summarizer() {
                 <FileText size={32} />
               </div>
               <div className="space-y-1">
-                <h3 className="font-semibold text-slate-900">No summary generated yet</h3>
+                <h3 className="font-semibold text-slate-900">{t.noSummary}</h3>
                 <p className="text-sm text-slate-500">
-                  Your AI-generated summary will appear here once you click the button.
+                  {t.summaryWillAppear}
                 </p>
               </div>
             </div>

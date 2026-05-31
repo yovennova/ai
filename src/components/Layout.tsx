@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { BookOpen, MessageSquare, FileText, Brain, LayoutDashboard, Menu, X } from "lucide-react";
+import { BookOpen, MessageSquare, FileText, Brain, LayoutDashboard, Menu, X, Globe, Compass } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,7 +14,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }: { icon: any, label:
   <button
     onClick={onClick}
     className={cn(
-      "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left",
+      "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left cursor-pointer",
       active 
         ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" 
         : "text-slate-600 hover:bg-slate-100"
@@ -26,13 +27,15 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }: { icon: any, label:
 
 export default function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { language, setLanguage, t } = useLanguage();
 
   const menuItems = [
-    { id: "home", label: "Dashboard", icon: LayoutDashboard },
-    { id: "chat", label: "AI Tutor", icon: MessageSquare },
-    { id: "summarizer", label: "Summarizer", icon: FileText },
-    { id: "quiz", label: "Quiz Generator", icon: Brain },
-    { id: "flashcards", label: "Flashcards", icon: BookOpen },
+    { id: "home", label: t.dashboard, icon: LayoutDashboard },
+    { id: "chat", label: t.aiTutor, icon: MessageSquare },
+    { id: "summarizer", label: t.summarizer, icon: FileText },
+    { id: "quiz", label: t.quizGenerator, icon: Brain },
+    { id: "flashcards", label: t.flashcards, icon: BookOpen },
+    { id: "resources", label: t.resources, icon: Compass },
   ];
 
   return (
@@ -40,7 +43,7 @@ export default function Layout({ children, activeTab, setActiveTab }: LayoutProp
       {/* Mobile Sidebar Toggle */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white text-slate-900 rounded-lg shadow-md border border-slate-200 cursor-pointer"
       >
         {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
@@ -52,10 +55,10 @@ export default function Layout({ children, activeTab, setActiveTab }: LayoutProp
       )}>
         <div className="flex flex-col h-full p-6">
           <div className="flex items-center gap-3 mb-10 px-2">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white">
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-200">
               <BookOpen size={24} />
             </div>
-            <h1 className="text-xl font-bold tracking-tight text-indigo-950">SmartStudy</h1>
+            <h1 className="text-xl font-bold tracking-tight text-indigo-950">{t.appName}</h1>
           </div>
 
           <nav className="flex-1 space-y-2">
@@ -73,11 +76,39 @@ export default function Layout({ children, activeTab, setActiveTab }: LayoutProp
             ))}
           </nav>
 
-          <div className="mt-auto pt-6 border-t border-slate-100">
-            <div className="bg-indigo-50 p-4 rounded-2xl">
-              <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">Pro Tip</p>
+          <div className="mt-auto pt-6 space-y-4">
+            {/* Language Toggle */}
+            <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl border border-slate-100">
+              <div className="flex items-center gap-2 text-slate-500">
+                <Globe size={16} />
+                <span className="text-xs font-semibold uppercase tracking-wider">{t.language}</span>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setLanguage("en")}
+                  className={cn(
+                    "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer",
+                    language === "en" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-600"
+                  )}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => setLanguage("am")}
+                  className={cn(
+                    "px-2.5 py-1 text-[10px] font-bold rounded-md transition-all cursor-pointer",
+                    language === "am" ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-slate-600"
+                  )}
+                >
+                  አማ
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-100/10">
+              <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">{t.proTip}</p>
               <p className="text-sm text-indigo-900 leading-relaxed">
-                Use the Quiz Generator after reading a summary to reinforce your learning!
+                {t.proTipText}
               </p>
             </div>
           </div>
